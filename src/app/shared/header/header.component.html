@@ -1,0 +1,16 @@
+<header id="header" class="fixedHeader">
+  <div class="innerHeader">
+    <aside class="rightSecton float-right">
+      <div class="the-navbar__user-meta flex items-center sm:ml-5 ml-2">
+          <div class="text-right leading-tight hidden sm:block">
+            <p class="font-semibold">{{user.name}}</p>
+          </div>
+          <button class="vs-con-dropdown parent-dropdown">
+            <div class="con-img ml-3 innerImg">
+              <img src="{{user.img | imagePath}}" alt="" width="40" height="40" class="rounded-full shadow-md cursor-pointer block">
+            </div>
+          </button>
+      </div>
+    </aside>
+  </div>
+</header>

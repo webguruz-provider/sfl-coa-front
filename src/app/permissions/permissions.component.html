@@ -1,0 +1,58 @@
+<div class="wrapper">
+    <app-navbar></app-navbar>
+    <div class="main-panel ps ps--active-y">
+        <app-header></app-header>
+        <div class="tempalte-dash">
+          <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div> 
+          <div class="table-wrapper">
+            <div class="table-title">
+              <div class="row">
+                <div class="col-sm-12">
+                  <h1>SFL Team Permissions</h1>
+                </div>
+              </div>
+            </div>
+            <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+			<div class="permissions-table">
+            <table class="table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th>Team Member</th>
+                  <th>Role</th>
+                  <th>View SFL Team</th>
+                  <th>Manange SFL Team</th>
+                  <th>View Clients</th>
+                  <th>Manage Clients</th>
+                  <th>View Projects</th>
+                  <th>Manage Projects</th>
+                  <th>Manage Permissions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let right of users">
+                  <td>{{right.name}}</td>
+                  <td>{{right.roles.name}}</td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'view_sfl_team',$event)" [checked]="right.access_rights.view_sfl_team"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'manage_sfl_team',$event)" [checked]="right.access_rights.manage_sfl_team"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'view_client',$event)" [checked]="right.access_rights.view_client"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'manage_client',$event)" [checked]="right.access_rights.manage_client"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'view_project',$event)" [checked]="right.access_rights.view_project"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'manage_project',$event)" [checked]="right.access_rights.manage_project"></td>
+                  <td><input type="checkbox" (click)="updateStatus(right.id,'manage_permissions',$event)" [checked]="right.access_rights.manage_permissions"></td>
+                </tr> 
+              </tbody>
+              
+            </table>
+			</div>    
+          </div>
+
+
+
+		
+
+        </div>
+    </div>
+</div>
+
+
+

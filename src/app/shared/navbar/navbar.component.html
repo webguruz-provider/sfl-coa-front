@@ -1,0 +1,44 @@
+<div class="menuBtn" id="">
+    <div class="mobileLogo"> <div class="brand"><img src="./assets/img/sfl-logo-white.png"></div></div>
+
+        <button _ngcontent-c3="" class="navbar-toggler" mat-raised-button="" type="button" id="showRight">
+            <span _ngcontent-c3="" class="sr-only">Toggle navigation</span>
+            <span _ngcontent-c3="" class="navbar-toggler-icon icon-bar"></span>
+            <span _ngcontent-c3="" class="navbar-toggler-icon icon-bar"></span>
+            <span _ngcontent-c3="" class="navbar-toggler-icon icon-bar"></span>
+        </button>
+        <div class="clearfix"></div>
+</div>
+<div class="nav-side-menu cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="cbp-spmenu-s2">
+    <div class="brand"><img src="./assets/img/sfl-logo.png"></div>
+    <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+    <div class="menu-list">
+        <ul id="menu-content" class="menu-content collapse out">
+            <li [routerLinkActive]="['active']" *ngIf="user.type==1">
+                <a [routerLink]="['/dashboard']"> <i class="fa fa-dashboard fa-lg"></i> Dashboard </a>
+            </li>
+            <li [routerLinkActive]="['active']" *ngIf="user.type==1">
+                <a [routerLink]="['/templates']"><i class="fa fa-leanpub fa-lg"></i> Templates</a>
+            </li>
+            <li *ngIf="permissions != null && permissions.view_sfl_team !== undefined && permissions.view_sfl_team && user.type==1" [routerLinkActive]="['active']">
+                <a [routerLink]="['/team']"><i class="fa fa-users fa-lg"></i> Sales For Life Team </a>
+            </li>  
+            <li *ngIf="permissions != null && permissions.view_client !== undefined && permissions.view_client && user.type==1" [routerLinkActive]="['active']">
+                <a [routerLink]="['/clients']"><i class="fa fa-user-circle fa-lg"></i> Clients</a>
+            </li>
+            <!-- <li *ngIf="user.type == 2 || (permissions != null && permissions.view_project)" [routerLinkActive]="['active']"> -->
+                <li [routerLinkActive]="['active']">
+                <a [routerLink]="['/projects']" > <i class="fa fa-file-code-o fa-lg"></i> Projects </a>
+            </li>
+            <li *ngIf="permissions != null && permissions.manage_permissions !== undefined && permissions.manage_permissions && user.type==1" [routerLinkActive]="['active']">
+                <a [routerLink]="['/permissions']"> <i class="fa fa-users fa-lg"></i> User and Permissions </a>
+            </li>
+            <li [routerLinkActive]="['active']">
+                <a [routerLink]="['/profile']" > <i class="fa fa-user-o fa-lg"></i> My Profile</a>
+            </li>
+            <li [routerLinkActive]="['active']">
+                <a href="javascript:void(0);" (click)="logout()"> <i class="fa fa-sign-out fa-lg"></i> Signout</a>
+            </li>
+        </ul>
+    </div>
+</div>

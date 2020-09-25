@@ -1,0 +1,209 @@
+<div class="wrapper" id="clients">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+    <div class="tempalte-dash">
+      <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-6">
+            <h1>Clients</h1>
+          </div>
+          <div class="col-sm-6 plusBtn">
+            <a (click)="openAddClientModal()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>                
+          </div>
+        </div>
+      </div>  
+      <div id="searchBar">
+        <div class="form-row">
+          <label>Company Name</label>
+          <input type="text" placeholder="Company Name" [(ngModel)]="search.company_name">
+        </div>
+        <div class="form-row">
+          <label>Status</label>
+          <select [(ngModel)]="search.status" >
+            <option value="-1" selected="search.status == -1">Select Status</option>
+            <option value="1" selected="search.status == 1">Active</option>
+            <option value="0" selected="search.status == 0">In Active</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Website</label>
+          <input type="text" placeholder="Website" [(ngModel)]="search.website">
+        </div>
+        <div class="form-row search">
+          <button class="button" (click)="filterClient()">Search</button>
+          <button class="button clear" (click)="clearClientSearch()">clear</button>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="outerTable">
+      <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Logo</th>
+                <th>Name</th>
+                <th>Website</th>
+                <th>Status</th>
+                <th *ngIf="permissions.manage_client">Action</th>
+            </tr>
+        </thead>  
+        <tbody>
+          <ng-container *ngFor="let client of clients; let i=index">             
+            <tr [ngClass]="{'shown':client.projects?.length > 0}" >
+              <td (click)="callProjects(client.id,i)" [ngClass]="{'details-control': client.projects_count,'shown':show}" data-id="{{client.id}}"></td>
+              <td><img style="width:150px;" src="{{client.logo | imagePath:'logo'}}"></td>
+              <td>{{client.name}}</td>
+              <td>{{client.website}}</td>
+              <td *ngIf="client.projects_count">Active</td>
+              <td *ngIf="!client.projects_count">InActive</td>
+              <td *ngIf="permissions.manage_client"><a (click)="openEditModel(client.id)" class="edit_btn"><i  aria-hidden="true" class="fa fa-pencil-square-o"></i></a> <a (click)="openDeleteModal(client.id)" class="delete_btn"><i aria-hidden="true" class="fa fa-trash"></i> </a> <a (click)="openAddProjectModel(client.id)" class="add_button"><i class="fa fa-plus" aria-hidden="true"></i></a></td>
+            </tr> 
+
+            <tr *ngIf="client.projects?.length > 0" >
+              <td colspan="6">
+              <table class="project_table" id="datatable{{i}}">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Status</th>
+                    <th *ngIf="permissions.manage_project">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of client.projects">
+                  <td>{{project.name}}</td>
+                  <td>Active</td>
+                  <td *ngIf="permissions.manage_project"><a (click)="openEditProjectModel(project.id)" class="edit_btn"><i  aria-hidden="true" class="fa fa-pencil-square-o"></i></a><a (click)="openProjectDeleteModel(project.id)" class="delete_btn"><i aria-hidden="true" class="fa fa-trash"></i></a></td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
+            </tr> 
+          </ng-container>
+        </tbody>      
+    </table>
+    </div>
+    </div>
+     <div id="addEmployeeModal"class="modal fade"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form  #addTeamMember=ngForm >
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <div class="modal-header">                        
+                <h4 class="modal-title">{{(pop_up_title)?pop_up_title:"Add Client"}}</h4>
+               
+              </div>
+              <div class="modal-body">                  
+                <div class="form-group">
+                  <label>Company Name</label>
+                  <input type="text" name="name" [(ngModel)]="form.name" [value]="form.name" class="form-control name" required>
+                  <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Website</label>
+                  <input type="text" name="website" [value]="form.website" [(ngModel)]="form.website" class="form-control website" required>
+                  <div class="alert alert-danger" [hidden]="!data['website']">{{data['website']}}</div>
+                </div>
+                <div class="form-group clientLogo">
+                  <label>Logo</label>
+                  <div class="inner-group">
+                    <input  type="file" accept="image/*" class="form-control logo" name="logo" required (change)="handleFileInput($event.target.files)"/>
+                    <img class="logo_img" src="{{logo_file | imagePath}}" style="width:300px">
+
+                  </div>
+                 
+                  <div class="alert alert-danger" [hidden]="!data['logo']">{{data['logo']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <textarea class="form-control desc" name="desc" [(ngModel)]="form.desc" required>{{form.desc}}</textarea> 
+                  <div class="alert alert-danger" [hidden]="!data['desc']">{{data['desc']}}</div> 
+                </div>                        
+              </div>
+              <input type="hidden" name="id" [(ngModel)]="form.id" *ngIf="form.id">
+              <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                <button (click)="addClient(form)" class="btn btn-success">{{(form.id)? 'Save': 'Add'}}</button>
+                <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Modal HTML -->
+      <div id="deleteEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <div class="modal-header">            
+                <h4 class="modal-title">Delete Company</h4>
+                
+              </div>
+              <div class="modal-body">          
+                <p>Are you sure you want to delete these Records?</p>
+                <p class="text-warning"><small>This action cannot be undone.</small></p>                
+              </div>
+              <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                <input *ngIf="!delete_project" type="button" class="btn btn-danger" (click)="deleteCompany(delete_id)" value="Delete">
+                <input *ngIf="delete_project" type="button" class="btn btn-danger" (click)="deleteProject(delete_id)" value="Delete">
+                <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="addProject"class="modal fade"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form  #addTeamMember=ngForm >
+              <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+              <div class="modal-header">                        
+                <h4 class="modal-title">{{(project_pop_up_title)?project_pop_up_title:"Add Project"}}</h4>
+
+              </div>
+              <div class="modal-body">                  
+                <div class="form-group">
+                  <label>Company Name</label>
+                  <select name="company_id" [(ngModel)] = "project_form.company_id">
+                    <option *ngFor="let client of clients" value="{{client.id}}" [selected]="project_form.company_id == client.id" >{{client.name}}</option>
+                  </select>
+                  <div class="alert alert-danger" [hidden]="!data['company_id']">{{data['company_id']}}</div>
+                </div>     
+                <div class="form-group">
+                  <label>Project Name</label>
+                  <input type="text" name="name" [value]="project_form.name" [(ngModel)]="project_form.name" class="form-control" required>
+                  <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                </div>
+              <div class="form-group">
+                <label>Template Name</label>
+                <select disabled="{{templateDisabled}}" [(ngModel)] = "project_form.template_id" name="template_id">
+                  <option  value="null" selected>Select Template</option>
+                  <option *ngFor="let template of templates" value="{{template.id}}">{{template.name}}</option>
+                </select>
+                <div class="alert alert-danger" [hidden]="!data['template_id']">{{data['template_id']}}</div>
+              </div>
+              <div class="form-group">
+                <label>Team/Region</label>
+                <input type="text" name="region" [value]="project_form.region" [(ngModel)]="project_form.region" class="form-control" required>
+                <div class="alert alert-danger" [hidden]="!data['region']">{{data['region']}}</div> 
+              </div>
+               <input type="hidden" name="id" [(ngModel)]="project_form.id" *ngIf="project_form.id">
+              </div>
+              <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" (click)="close()" value="Cancel">
+                <button (click)="addProject()" class="btn btn-success">{{(project_form.id)? 'Save': 'Add'}}</button>
+                <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

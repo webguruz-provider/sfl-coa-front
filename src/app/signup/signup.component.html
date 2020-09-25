@@ -1,0 +1,87 @@
+<div class="wrapper">
+  <div id="register" class="page-header" style="background-image: url('./assets/img/login-image.jpg');">
+          <div class="container">
+              <div class="registerLogo text-center">
+                  <img src="./assets/img/sfl-logo-white.png">
+                </div>
+              <div class="row">
+                
+                  <div class="col-lg-6 col-sm-6 mr-auto ml-auto">
+                    <div class="card card-register">
+                        <div class="float-right rightSection">
+                              <h3 class="title">Registration</h3>
+                             
+                              <form class="register-form" #registerForm=ngForm (ngSubmit)="onSubmit()">
+                                  <div class="alert alert-{{status}}" [hidden]="!message">{{message}}<ng-container *ngIf="status == 'success'"> <a [routerLink]="['']" class="login_btn">Login</a> </ng-container></div>
+                                  <div class="input-group form-group-no-border">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-user"></i>
+                                      </span>
+                                    </div>
+                                      <input type="text" class="form-control" name="name" placeholder="Name" [(ngModel)] = "form.name">
+                                  </div>
+                                  <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                                  <div class="input-group form-group-no-border" >
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-briefcase"></i>
+                                      </span>
+                                    </div>
+                                      <input type="text" class="form-control" name="job_title" placeholder="Job Title" [(ngModel)] = "form.job_title">
+                                  </div>
+                                  <div class="alert alert-danger" [hidden]="!data['job_title']">{{data['job_title']}}</div>
+                                  <div class="input-group form-group-no-border" >
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                                      </span>
+                                    </div>
+                                      <input type="email" class="form-control" name="email" placeholder="Email Address" [(ngModel)] = "form.email">
+                                  </div>
+                                      <div class="alert alert-danger" [hidden]="!data['email']">{{data['email']}}</div>
+                                  <div class="input-group form-group-no-border">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-phone"></i>
+                                      </span>
+                                    </div>
+                                      <input type="text" class="form-control" name="phone" placeholder="Phone Number" [(ngModel)] = "form.phone">
+                                  </div>
+                                      <div class="alert alert-danger" [hidden]="!data['phone']">{{data['phone']}}</div>
+                                      <input type="hidden" class="form-control" placeholder="company Id" name="company_id" [(ngModel)] = "form.company_id">
+                                      <div class="alert alert-danger" [hidden]="!data['company_id']">{{data['company_id']}}</div>
+                                      <input type="hidden" class="form-control" placeholder="type"  name="type" [value]="form.type" [(ngModel)] = "form.type">
+                                      <div class="alert alert-danger" [hidden]="!data['type']">{{data['type']}}</div>
+                                  
+
+                                  <div class="input-group form-group-no-border" >
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-lock"></i>
+                                      </span>
+                                    </div>
+                                      <input type="password" class="form-control" placeholder="Password" [(ngModel)] = "form.password" name="password">
+                                  </div>
+                                  <div class="alert alert-danger" [hidden]="!data['password']">{{data['password']}}</div>
+                                  <div class="input-group form-group-no-border">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fa fa-lock"></i>
+                                      </span>
+                                    </div>
+                                      <input type="password" class="form-control" placeholder="Confirm Password" [(ngModel)] = "form.password_confirmation" name="password_confirmation">
+                                  </div>
+                                  <div class="alert alert-danger" [hidden]="!data['password_confirmation']" >{{data['password_confirmation']}}</div>
+                                  <button class="btn btn-danger btn-block btn-round">Sign Up</button>
+                                  <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+                              </form>
+                              
+                        </div>
+                       
+                    </div>
+                  </div>
+              </div>
+          </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="wrapper" id="project">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+    <div class="tempalte-dash myprofile-tempalte">  
+      <div class="table-title">
+        <div class="row">
+          <div class="col-8">
+            <h1>Profile</h1>
+          </div>
+          <div class="col-4">
+            <div class="profile-edit-btn" (click)="makeEdit()">{{edit_btn_text}}</div>  
+          </div>
+        </div>
+      </div> 
+
+  <form #myProfile="ngForm" (ngSubmit)="saveMyProfile()">
+      <div class="row profile_form">
+        <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>        
+        <div class="col-md-3 col-xs-12 ProfilePic">
+          <figure class="text-left">
+      <div class="edit-file-icon"> 
+      <img class="pic" src="{{profile_pic | imagePath}}">
+            <input *ngIf="edit"  type="file" accept="image/*" class="form-control edit-pic" name="pic" required (change)="handleFileInput($event.target.files)"/>
+            <label *ngIf="edit" class="edit-icon"></label>  
+      </div>  
+          </figure>
+        </div>  
+        <div class="col-md-9 col-xs-12 profileDetail">
+          <div class="detail">
+              <div class="form-row">
+                <div class="col-md-6 mb-3">
+                  <label for="validationDefault01">Name</label>
+                  <span *ngIf="!edit">{{form.name}}</span>
+                  <input *ngIf="edit" type="text" [(ngModel)]="form.name" class="form-control" id="validationDefault01" placeholder="Name" name="name" value="" required>
+                  <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="validationDefault04">Email Address</label>
+                  <span *ngIf="!edit">{{form.email}}</span>
+                  <input *ngIf="edit" type="email" disabled [(ngModel)]="form.email" class="form-control" id="validationDefault04" placeholder="Email Address" name="email" required>
+                  <div class="alert alert-danger" [hidden]="!data['email']">{{data['email']}}</div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-md-6 mb-3">
+                  <label for="validationDefault03">Job Title</label>
+                  <span *ngIf="!edit">{{form.job_title}}</span>
+                  <input *ngIf="edit" type="text" class="form-control" name="job_title" [(ngModel)]="form.job_title" id="validationDefault03" placeholder="Job Title" required>
+                  <div class="alert alert-danger" [hidden]="!data['job_title']">{{data['job_title']}}</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="validationDefault03">Phone Number</label>
+                  <span *ngIf="!edit">{{form.phone}}</span>
+                  <input *ngIf="edit" type="text" class="form-control" name="phone" [(ngModel)]="form.phone" id="validationDefault03" placeholder="Phone Number" required>
+                  <div class="alert alert-danger" [hidden]="!data['phone']">{{data['phone']}}</div>
+                </div>
+              </div>
+              <div class="form-row">
+                <!-- <div class="col-md-6 mb-3">
+                  
+                </div> -->
+                <div class="col-md-12">
+                  <div class="form-check email-notification">      
+                      <label class="form-check-label" for="invalidCheck2">
+                          Enable Email Notification
+                      </label>
+                      <span *ngIf="!edit && form.need_reminder"><i class="fa fa-check"></i></span>
+                      <span *ngIf="!edit && !form.need_reminder"><i class="fa fa-times"></i></span>
+                    <input *ngIf="edit" class="form-check-input" name="need_reminder" [(ngModel)]="form.need_reminder"  type="checkbox" value="" id="invalidCheck2" required>
+                    <div class="alert alert-danger" [hidden]="!data['need_reminder']">{{data['need_reminder']}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">  
+                  <div class="col-md-12 ">
+                    <label for="validationDefault03">Description</label>
+                    <span *ngIf="!edit">{{form.description}}</span>
+                    <textarea *ngIf="edit" placeholder="Description" name="description" [(ngModel)]="form.description" ></textarea>
+                    <div class="alert alert-danger" [hidden]="!data['description']">{{data['description']}}</div>
+                  </div>
+                </div>
+                <input *ngIf="edit" class="form-check-input" name="type" [(ngModel)]="form.type"  type="hidden" value="" id="invalidCheck2" required>
+              <div class="save-btn"><button *ngIf="edit" class="btn btn-primary" type="submit">Save</button></div>
+          </div>
+        </div>        
+      </div>
+    </form>  
+    </div>
+  </div>
+</div>      

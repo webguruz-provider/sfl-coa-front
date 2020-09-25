@@ -1,0 +1,41 @@
+<div class="wrapper" id="project">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+    <div class="tempalte-dash">
+      <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>
+      <div class="table-title">
+        <div class="row">
+          <div class="col-12">
+            <h1>On Going Projects</h1>
+          </div>
+        </div>
+      </div> 
+      <div class="table">
+      	<table class="project_table" id="datatable">
+	        <thead>
+	          <tr>
+	            <th>Project Name</th>
+	            <th>Status</th>
+	            <th>Client</th>
+	           <!--  <th *ngIf="permissions.manage_project">Action</th> -->
+	          </tr>
+	        </thead>
+	        <tbody>
+            <ng-container *ngIf="projects?.length > 0">
+    	        <tr *ngFor="let project of projects">
+    	          <td>{{project.name}}</td>
+    	          <td>Active</td>
+    	          <td>{{project.company.name}}</td>
+    	         <!--  <td *ngIf="permissions.manage_project"><a (click)="openEditProjectModel(project.id)" class="edit_btn"><i  aria-hidden="true" class="fa fa-pencil-square-o"></i></a><a (click)="openProjectDeleteModel(project.id)" class="delete_btn"><i aria-hidden="true" class="fa fa-trash"></i></a></td> -->
+    	        </tr>
+            </ng-container>
+            <ng-container *ngIf="projects?.length == 0">
+              <tr><td colspan="3" align="center">No projects are available</td></tr>  
+            </ng-container>
+	        </tbody>
+      	</table>
+      </div>
+    </div>
+  </div>
+</div>      

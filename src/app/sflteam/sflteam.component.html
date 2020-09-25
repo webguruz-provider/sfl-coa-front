@@ -1,0 +1,275 @@
+<div class="wrapper" id="team">
+    <app-navbar></app-navbar>
+    <div class="main-panel ps ps--active-y">
+        <app-header></app-header>
+        
+        <div class="tempalte-dash">
+            <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div> 
+            <div class="table-wrapper team-heading"> 
+              <div class="table-title">
+                <div class="row"> 
+                  <div class="col-9">      
+                    <h1>Sales For Life Team</h1>
+                  </div>
+                  <div class="col-3">       
+                    <a (click)="openAddTeamMemeberModal()" class="btn btn-success"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>				
+                  </div>  
+                </div>
+              </div>
+			  <div class="team-table-new">    
+                <table class="table table-striped table-hover" id="sflteam">
+                    <thead>
+                        <tr>
+             
+                            <th>Name</th>
+                            <th>Job Title</th>
+                            <th>Email Address</th>
+                            <th>Phone Number</th>
+                            <th *ngIf="permissions.manage_sfl_team">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of team">
+                            <td>{{member.name}}</td>
+                            <td>{{member.roles.name}}</td>
+                            <td>{{member.email}}</td>
+                            <td>{{member.phone}}</td>
+                            <td *ngIf="permissions.manage_sfl_team">
+                                <a href="javascript:void(0);" (click)="editModal(member.id)" class="edit" data-toggle="modal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0);" (click)="deleteModal(member.id)" class="delete" data-toggle="modal"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0);" (click)="showResetModal(member.email)" class="reset" >Reset Password</a>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+				</div>    
+            </div>
+      <!-- Edit Modal HTML -->
+      <div id="addEmployeeModal"class="modal fade"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form  #addTeamMember=ngForm >
+                <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+              <div class="modal-header">						
+                <h4 class="modal-title">{{(pop_up_title)?pop_up_title:"Add Team Member"}}</h4>
+               
+              </div>
+              <div class="modal-body">					
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" name="name" [(ngModel)]="form.name" [value]="form.name" class="form-control" required>
+                  <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Job Title</label>
+                  <input type="text" name="job_title" [value]="form.job_title" [(ngModel)]="form.job_title" class="form-control" required>
+                  <div class="alert alert-danger" [hidden]="!data['job_title']">{{data['job_title']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input  type="email" class="form-control" [disabled]="form.id" name="email" [value]="form.email" [(ngModel)]="form.email" required/>
+                  <div class="alert alert-danger" [hidden]="!data['email']">{{data['email']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number</label>
+                  <input type="text" class="form-control"  [(ngModel)]="form.phone" [value]="form.phone" name="phone" required>
+                  <div class="alert alert-danger" [hidden]="!data['phone']">{{data['phone']}}</div>
+                  <h2>Access Rights</h2>
+                    <div id="checkBox" class="checkBoxes">
+                      <div class="form-group">
+                        <label> View SFL Team</label>
+                        <input type="checkbox" name="access_rights['view_sfl_team']" [(ngModel)]="form.access_rights.view_sfl_team" [value]="form.access_rights.view_sfl_team">
+                      </div>
+                      <div class="form-group">
+                          <label>  Manage SFL Team </label>
+                           <input type="checkbox" name="access_rights['manage_sfl_team']" [(ngModel)]="form.access_rights.manage_sfl_team" [value]="form.access_rights.manage_sfl_team">
+                      </div>
+
+                      <div class="form-group">
+                          <label> View Client </label>
+                          <input type="checkbox" name="access_rights['view_client']" [(ngModel)]="form.access_rights.view_client" [value]="form.access_rights.view_client">
+                      </div>
+                      <div class="form-group">
+                          <label> Manage Client </label>
+                          <input type="checkbox" name="access_rights['manage_client']" [(ngModel)]="form.access_rights.manage_client" [value]="form.access_rights.manage_client">
+                      </div>
+                      <div class="form-group">
+                          <label>View Project </label>
+                          <input type="checkbox" name="access_rights['view_project']" [(ngModel)]="form.access_rights.view_project" [value]="form.access_rights.view_project">
+                      </div>
+                      <div class="form-group">
+                          <label> Manage Project </label>
+                          <input type="checkbox" name="access_rights['manage_project']" [(ngModel)]="form.access_rights.manage_project" [value]="form.access_rights.manage_project">
+                      </div>
+                  </div>
+
+                </div>	
+                <input type="hidden" name="id" *ngIf="form.id" [value]="form.id">	
+                <input type="hidden" name="type"  [value]="1">  			
+              </div>
+              <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" (click)="close()" value="Cancel">
+                <button (click)="addUpdateTeamMember(form)" [disabled]="send_ajax" class="btn btn-success">{{(form.id)? 'Save': 'Add'}}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Delete Modal HTML -->
+      <div id="deleteEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <div class="modal-header">						
+                <h4 class="modal-title">Delete Team Member</h4>
+                
+              </div>
+              <div class="modal-body">					
+                <p>Are you sure you want to delete these Records?</p>
+                <p class="text-warning"><small>This action cannot be undone.</small></p>                
+              </div>
+              <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                <input type="button" class="btn btn-danger" (click)="deleteTeamMember(member_id)" value="Delete">
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+        <!-- resetpassword Modal HTML -->
+        <div id="resetpassword" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form #ResetForm=ngForm>
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="modal-header">						
+                  <h4 class="modal-title">Reset Password</h4>
+                </div>
+
+                <div class="input-group form-group-no-border" >
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                      </span>
+                    </div>
+  
+                    <input type="email" class="form-control nameEnter" placeholder="Email"name="email" [(ngModel)]="reset.email" required disabled>   
+                  </div>
+
+                
+                <div class="alert alert-danger" [hidden]="!data['email']">{{data['email']}}</div>
+                <div class="input-group form-group-no-border" >
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+
+                    </span>
+                  </div>
+
+                    <input type="password" class="form-control" placeholder="New Password" name="password" [(ngModel)]="reset.password" required>                                        
+                </div>
+                <div class="alert alert-danger" [hidden]="!data['password']">{{data['password']}}</div>
+                <div class="input-group form-group-no-border" >
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+
+                    </span>
+                  </div>
+
+                    <input type="password" class="form-control" placeholder="Confirm Password"  name="password_confirmation" [(ngModel)]="reset.password_confirmation" required>                                        
+                </div>
+                <div class="alert alert-danger" [hidden]="!data['password_confirmation']">{{data['password_confirmation']}}</div>
+                                   
+                                    
+                <div class="modal-footer">
+                  <button class="btn btn-danger btn-block btn-round" (click)="submitResetForm(reset)" [disabled]="!ResetForm.valid">Change Password</button>
+                  <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="pendingTaskModal" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>
+                <div class="modal-header">            
+                  <h4 class="modal-title">Pending Tasks</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="selectBluk" *ngIf="show_bulk_action_select">
+                        <button *ngIf="permissions != null && permissions.manage_sfl_team && user.type == 1" (click)="bulkAssign()">
+                           Bulk Assignment 
+                        </button>
+                      </div> 
+                      <div *ngIf="show_bulk_assign_form && user.type == 1">
+                        <form #bulkAssign=ngForm>                         
+                              <div class="col-md-6"> 
+                                  <div class="form-group row">
+                                      <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Assigned To</label>
+                                      <div class="col-sm-8">
+                                          <select class="form-control" name="assigned_to" [(ngModel)]="assigned_to" id="exampleFormControlSelect1">
+                                              <option value="null" selected>Select SFL Team Member</option>
+                                              <option *ngFor="let team of team"  value="{{team.id}}" [selected]="assigned_to == team.id">{{team.name}}</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                              </div>
+                            <div class="task-add-btn"><button class="add-btn" (click)="bulkAssignToTask()">Save</button><div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div></div> 
+                            </form>  
+                        </div>
+                      
+                      <table class="table table-striped table-hover" id="sflteam">
+                      <thead>
+                          <tr>
+                              <th *ngIf="user.type == 1"><input (click)="addChild($event)" class="checkedAll" type="checkbox"></th>
+                              <th>Company</th>
+                              <th>Project</th>
+                              <th>Tasks </th>
+                              <th>Dates</th>
+                              <th>Urgent</th>
+                              <th>Need Reminder</th>
+                              <th>Completed</th>                            
+                              <th>Assigned</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let task of pending_tasks">
+                              <td *ngIf="user.type == 1"><input class="checkchild" (click)="checkbox(task.id)" [checked]="checkarray.indexOf(task.id) > -1" type="checkbox"></td>
+                              <td>{{task.project.name}}</td>
+                              <td>{{task.project.company.name}}</td>
+                              <td>{{task.task.title}}: {{task.task.task}}</td>
+                              <td>{{task.due_date | date: 'MM/dd/yyyy'}}</td>
+                              <td *ngIf="task.urgent"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="!task.urgent"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              
+                              <td *ngIf="task.need_reminder"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="!task.need_reminder"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              
+                              <td *ngIf="task.task_status"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="!task.task_status"><i class="fa fa-times" aria-hidden="true"></i></td>
+                              <td>{{task.users.name}}</td>
+                          </tr>
+                      </tbody>
+                  </table> 
+                </div>          
+            </div>
+          </div>
+        </div>
+
+        </div>
+    </div>
+</div>
+
+
+

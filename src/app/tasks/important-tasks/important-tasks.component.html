@@ -1,0 +1,38 @@
+<div class="wrapper" id="project">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+    <div class="tempalte-dash">
+      <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>
+      <div class="table-title">
+        <div class="row">
+          <div class="col-12">
+            <h1>Today's Important Tasks</h1>
+          </div>
+        </div>
+      </div> 
+      <div class="table">
+      	<table class="project_table" id="datatable">
+	        <thead>
+	          <tr>
+	            <th>Task</th>
+	            <th>Status</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+            <ng-container *ngIf="tasks?.length > 0">
+    	        <tr *ngFor="let task of tasks">
+    	          <td>{{task.task.title}}: {{task.task.task}}</td>
+    	          <td *ngIf="task.status"><i class="fa fa-check"></i></td>
+                <td *ngIf="!task.status"><i class="fa fa-times"></i></td>
+    	        </tr>
+            </ng-container>
+            <ng-container *ngIf="tasks?.length == 0">
+              <tr><td colspan="2" align="center">No tasks are available</td></tr>  
+            </ng-container>
+	        </tbody>
+      	</table>
+      </div>
+    </div>
+  </div>
+</div>      

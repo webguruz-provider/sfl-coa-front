@@ -1,0 +1,1358 @@
+<ng-template #recursiveList let-prelatedtasks>
+    <ul class="navbar-nav">
+       <li *ngFor="let task of prelatedtasks" [ngClass]="{'green':task.task_status == 1, 'red':task.task_status == 0, 'has_children':task.children?.length > 0}" class="nav-item"  > <a  class="nav-link" [ngClass]="{'has_children_link':task.children?.length > 0}" href="javascript:void(0)" role="button" >{{task.title}}<i *ngIf="task.children?.length > 0"  class="fa fa-angle-down" aria-hidden="true"></i></a>
+         <ng-container *ngIf="task.children?.length > 0 "> 
+           <ng-container [ngTemplateOutlet]="recursiveList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+         </ng-container>
+       </li>   
+    </ul>
+</ng-template>
+<ng-template #recursiveChildList let-prelatedtasks>
+    <ul class="navbar-nav" class="dropdown-menu dropdown-info" aria-labelledby="dropdownMenuButton">
+       <li *ngFor="let task of prelatedtasks" [ngClass]="{'green':task.task_status == 1, 'red':task.task_status == 0}" class="nav-item"  > <a class="nav-link " data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">{{task.title}} <i *ngIf="task.children?.length > 0"  class="fa fa-angle-down" aria-hidden="true"></i>  
+</a>
+          <ng-container *ngIf="task.children?.length > 0 "> 
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+          </ng-container>
+       </li>    
+    </ul>
+</ng-template>
+
+
+<ng-template #displayDocuments let-f_urls let-meeting_docs = 'meeting_docs' >
+  <ng-container *ngFor='let f_url of f_urls; let i=index;'>    
+        <div class="outer">
+      <div *ngIf="f_url.doctype.indexOf('png') >= 0 || f_url.doctype.indexOf('jpg') >= 0 || f_url.doctype.indexOf('jpeg') >= 0 || f_url.doctype.indexOf('image') >= 0" class="uplaod-img">
+       <img  src="{{f_url.doc | imagePath}}" height="200" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+
+      <div *ngIf="f_url.doctype.indexOf('doc') >= 0" class="document_upload">
+          <div class="title">{{f_url.docname}}</div>
+          </div>
+          <div *ngIf="f_url.doctype.indexOf('zip') >= 0 " class="document_zip">
+              <div class="title">{{f_url.docname}}</div>
+              </div>
+          <div *ngIf="f_url.doctype.indexOf('pdf') >= 0  " class="document_pdf">
+              <div class="title">{{f_url.docname}}</div>
+              </div>
+          <div *ngIf="f_url.doctype.indexOf('powerpoint') >= 0  " class="document_ppt">
+              <div class="title">{{f_url.docname}}</div>
+              </div>
+          <div *ngIf="f_url.doctype.indexOf('octet') >= 0  " class="document_psd">
+              <div class="title">{{f_url.docname}}</div>
+              </div>
+
+              <div *ngIf="f_url.doctype.indexOf('video') >= 0 || f_url.doctype.indexOf('mp4') >= 0 || f_url.doctype.indexOf('webm') >= 0  " class="document_video">
+              <div class="title">{{f_url.docname}}</div>
+              </div>
+      
+              <div *ngIf="f_url.doctype.indexOf('image') == -1 && f_url.doctype.indexOf('doc') == -1 && f_url.doctype.indexOf('zip') == -1 && f_url.doctype.indexOf('png') == -1 && f_url.doctype.indexOf('jpg') == -1 && f_url.doctype.indexOf('pdf') == -1 && f_url.doctype.indexOf('powerpoint') == -1 && f_url.doctype.indexOf('octet') == -1 &&
+              f_url.doctype.indexOf('video') == -1 &&
+              f_url.doctype.indexOf('webm') == -1 &&
+              f_url.doctype.indexOf('mp4') == -1 " class="document_doc">
+                  <div class="title">{{f_url.docname}}</div>
+                  </div>
+
+      <div *ngIf="!meeting_docs" (click)="deleteUploadFile(i)"><i class="fa fa-times" aria-hidden="true"></i></div>
+      <div *ngIf="meeting_docs" (click)="f_url.docid?deleteFile(i,f_url.docid):deleteFile(i)"><i class="fa fa-times" aria-hidden="true"></i></div>
+    </div>
+    </ng-container>
+</ng-template>
+
+<ng-template #displayFiles let-temp_files let-download='download'>
+  <ng-container *ngFor="let t_file of temp_files" > 
+    <div class="col-md-3">
+      <div class="project-image">
+        <div *ngIf="t_file.file_type.indexOf('png') >= 0 || t_file.file_type.indexOf('jpg') >= 0 || t_file.file_type.indexOf('jpeg') >= 0 || t_file.file_type.indexOf('image') >= 0" class="uplaod-img">
+       <img  src="{{t_file.path | imagePath }}" height="200" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+
+      <div *ngIf="t_file.file_type.indexOf('doc') >= 0" class="document_upload">
+          <div class="title">{{t_file.name}}</div>
+          </div>
+          <div *ngIf="t_file.file_type.indexOf('zip') >= 0 " class="document_zip">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+          <div *ngIf="t_file.file_type.indexOf('pdf') >= 0  " class="document_pdf">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+          <div *ngIf="t_file.file_type.indexOf('powerpoint') >= 0  " class="document_ppt">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+          <div *ngIf="t_file.file_type.indexOf('octet') >= 0  " class="document_psd">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+
+              <div *ngIf="t_file.file_type.indexOf('video') >= 0  || t_file.file_type.indexOf('mp4') >= 0 || t_file.file_type.indexOf('webm') >= 0 " class="document_video">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+      
+              <div *ngIf="t_file.file_type.indexOf('image') == -1 && t_file.file_type.indexOf('doc') == -1 && t_file.file_type.indexOf('zip') == -1 && t_file.file_type.indexOf('png') == -1 && t_file.file_type.indexOf('jpg') == -1 && t_file.file_type.indexOf('pdf') == -1 && t_file.file_type.indexOf('powerpoint') == -1 && t_file.file_type.indexOf('octet') == -1 &&
+              t_file.file_type.indexOf('video') == -1 &&
+              t_file.file_type.indexOf('webm') == -1 &&
+              t_file.file_type.indexOf('mp4') == -1 " class="document_doc">
+              <div class="title">{{t_file.name}}</div>
+              </div>
+        <!-- <div *ngIf=" (t_file.file_type.indexOf('png') >= 0 || t_file.file_type.indexOf('jpg') >= 0 || t_file.file_type.indexOf('jpeg') >= 0)">
+          <img class="img-fluid"   [src]="'http://202.164.49.133:5022/sfl-coa/blog/public/' + t_file.path" height="200">
+        </div>
+        <div class="img-fluid doc-file"  *ngIf="t_file.file_type.indexOf('png') == -1 && t_file.file_type.indexOf('jpg') == -1 && t_file.file_type.indexOf('png') == -1">                                                                 
+        </div> 
+
+        <div class="title">{{t_file.name}}</div>-->
+
+        <a *ngIf="!download" (click)="deleteFileModal(t_file.id)" class="crossBtn"><i class="fa fa-times" aria-hidden="true"></i></a>
+        <a *ngIf="download" href="{{t_file.path | imagePath }}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a>
+      </div>                                
+    </div>
+  </ng-container>  
+</ng-template>
+
+<!-- <ng-template #recursiveChildList let-prelatedtasks>
+    <ul class="navbar-nav" class="dropdown-menu dropdown-info" aria-labelledby="dropdownMenuButton">
+       <li *ngFor="let task of prelatedtasks" [ngClass]="{'green':task.task_status == 1, 'red':task.task_status == 0}" class="nav-item"  > <a class="nav-link " data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">{{task.title}}</a>
+          <ng-container *ngIf="task.children?.length > 0 "> 
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+          </ng-container>
+       </li> 
+    </ul>
+</ng-template> -->
+
+  
+  
+
+<div class="wrapper" id="project">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+
+  
+
+  <div class="tempalte-dash">
+    <div class="alert alert-{{status}}" [hidden]="!message">{{message}}</div>
+    <div class="table-title">
+        <div class="row">
+          <div class="col-sm-12">
+            <h1>Projects</h1>
+          </div>
+        </div>
+      </div> 
+      <div id="searchBar">
+          <div *ngIf="user.type == 1" class="form-row companyName">
+            <label>Company Name</label>
+            <select (change)="getProjects($event.target.value)" [(ngModel)]="search.company_id">
+              <option value="">Select Company Name</option>
+              <option *ngFor="let company of clients;" [value]="company.id" [selected] = "search.company_id == company.id">{{company.name}}</option>
+            </select>
+              <a *ngIf="permissions != null && permissions.manage_client" href="#addEmployeeModal1" class="btn btn-success" data-toggle="modal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>  
+          </div>
+          <div class="form-row">
+            <label>Status</label>
+            <select [(ngModel)]="search.status">
+              <option value="-1" [selected]="search.status == -1">Select Status</option>
+              <option value="1" [selected]="search.status == 1">Active</option>
+              <option value="0" [selected]="search.status == 0">Inactive</option>
+            </select>
+          </div>
+          <div class="form-row companyName">
+            <label>Project Name*</label>
+            <select [(ngModel)]="search.project_id">
+                <option value="">Select Project Name</option>
+                <option *ngFor="let p of projects" [value]="p.id" [selected]="search.project_id == p.id">{{p.name}}</option>
+              </select>
+               <div class="alert alert-danger" [hidden]="!data['project_id']">{{data['project_id']}}</div>
+            <a href="#addProject" *ngIf="permissions != null && permissions.manage_project" class="btn btn-success" data-toggle="modal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a> 
+          </div>
+          <div class="form-row search">
+            <button class="button" (click)="searchProject()">Search</button>
+            <button class="button clear" (click)="clearProjectSearch()">Clear</button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div [ngClass]="{'hide':!project_found}">
+        <div id="project-name" class="margin-top">
+          <h1>Project Name 1</h1>
+            <div class="row">
+            <div class="col-md-3 col-xs-12 list">
+              <div class="inner">
+                  <a (click)="openProjectContactsModel()" ><i class="fa fa-address-book-o" aria-hidden="true"></i>Project Contacts</a>
+              </div>
+            </div>
+            <div class="col-md-3 col-xs-12 list">
+              <div class="inner">
+                <a href="#projectMeeting"  data-toggle="modal"><i class="fa fa-users" aria-hidden="true"></i>Project Meetings</a>
+              </div>
+            </div>
+            <div class="col-md-3 col-xs-12 list">
+              <div class="inner">
+                <a href="#projectLogistics"  data-toggle="modal"><i class="fa fa-calendar" aria-hidden="true"></i>Dates & Logistics</a>
+              </div>
+            </div>
+            <div class="col-md-3 col-xs-12 list">
+                <div class="inner">
+                  <a href="#projectFiles"  data-toggle="modal"><i class="fa fa-file-powerpoint-o" aria-hidden="true"></i> Project Files</a>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+          </div>    
+
+        </div>
+
+        <div id="deliveryProgress" class="margin-top">
+            <h1>Delivery Progress</h1>
+            <div class="progressBar">
+        
+                               <ng-template
+    [ngTemplateOutlet]="recursiveList"
+    [ngTemplateOutletContext]="{ $implicit: prelatedtasks}">
+</ng-template>
+                <!--ul class="navbar-nav"-->
+             <!--       <li *ngFor="let task of p_related_tasks" [ngClass]="{'green':true}" class="nav-item" >
+                      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">task.title</a>
+                    </li> -->
+                  
+
+<!-- 
+                            <ng-template
+    [ngTemplateOutlet]="recursiveChildList"
+    [ngTemplateOutletContext]="{ $implicit: prelatedtasks}">
+</ng-template>
+
+<ng-template #recursiveChildList let-task>
+          <mat-menu #task.id="matMenu" [overlapTrigger]="false">
+            <span *ngFor="let task of prelatedtasks">
+              <span *ngIf="task.children && task.children.length > 0">
+                <button mat-menu-item color="primary" [matMenuTriggerFor]="task.id">
+                  <span>{{ task.title }}</span>
+                </button>
+                <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+              </span>
+              <span *ngIf="!task.children || task.children.length === 0">
+                <button mat-menu-item (click)="task.onClick();">
+                  <span>{{ task.title }}</span>
+                </button>
+              </span>
+            </span>
+          </mat-menu>
+        </ng-template> -->
+
+
+<!-- <ng-template #recursiveChildList let-task>
+      <ng-container *ngFor="let task of prelatedtasks">
+        <button mat-button *ngIf="task.children?.length > 0" [matMenuTriggerFor]="task.id">{{task.title}} --{{task.id}}</button>
+        <button mat-button *ngIf="task.children?.length == 0">{{task.title}}  00000000</button>
+        <ng-container *ngIf="task.children?.length > 0"> 
+          <mat-menu #task.id="matMenu">
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+         </mat-menu>
+         </ng-container>
+      </ng-container>
+
+</ng-template> -->
+
+<!-- <ng-template #recursiveChildList let-prelatedtasks>
+      <ng-container *ngFor="let task of prelatedtasks">
+        <button mat-button *ngIf="task.children?.length > 0" [matMenuTriggerFor]="task.parent_task_id">{{task.title}}</button>
+        {{task.children?.length}}
+        <button mat-button *ngIf="task.children?.length == 0">{{task.title}}</button>
+        <ng-container *ngIf="task.children?.length > 0"> 
+          <mat-menu #{{task.parent_task_id}}="matMenu">
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children,parent_id: task.id}"></ng-container>
+         </mat-menu>
+         </ng-container>
+      </ng-container>
+
+</ng-template> -->
+
+<!--ng-template #recursiveList let-prelatedtasks>
+    
+      <ng-container *ngFor="let task of prelatedtasks">
+        <button mat-menu-item [matMenuTriggerFor]="parent_id">{{task.title}}{{task.children?.length}}</button>
+       
+        <ng-container *ngIf="task.children?.length > 0 "> 
+          <mat-menu #{{task.id}}="matMenu">
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children,parent_id: task.id}"></ng-container>
+           </mat-menu>
+         </ng-container>
+       
+       </ng-container>
+      
+    <ul class="navbar-nav">
+       <li *ngFor="let task of prelatedtasks" [ngClass]="{'green':task.task_status == 1, 'red':task.task_status == 0, 'has_children':task.children?.length > 0}" class="nav-item"  > <a class="nav-link" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">{{task.title}}</a>
+         <ng-container *ngIf="task.children?.length > 0 "> 
+           <ng-container [ngTemplateOutlet]="recursiveChildList" [ngTemplateOutletContext]="{$implicit: task.children}"></ng-container>
+         </ng-container>
+       </li> 
+    </ul>
+</ng-template> -->
+     <!--  <button mat-button [matMenuTriggerFor]="animals">Animal index</button>
+
+      <mat-menu #animals="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="vertebrates">Vertebrates</button>
+        <button mat-menu-item [matMenuTriggerFor]="invertebrates">Invertebrates</button>
+      </mat-menu>
+
+      <mat-menu #vertebrates="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="fish">Fishes</button>
+        <button mat-menu-item [matMenuTriggerFor]="amphibians">Amphibians</button>
+        <button mat-menu-item [matMenuTriggerFor]="reptiles">Reptiles</button>
+        <button mat-menu-item>Birds</button>
+        <button mat-menu-item>Mammals</button>
+      </mat-menu>
+
+      <mat-menu #invertebrates="matMenu">
+        <button mat-menu-item>Insects</button>
+        <button mat-menu-item>Molluscs</button>
+        <button mat-menu-item>Crustaceans</button>
+        <button mat-menu-item>Corals</button>
+        <button mat-menu-item>Arachnids</button>
+        <button mat-menu-item>Velvet worms</button>
+        <button mat-menu-item>Horseshoe crabs</button>
+      </mat-menu>
+
+      <mat-menu #fish="matMenu">
+        <button mat-menu-item>Baikal oilfish</button>
+        <button mat-menu-item>Bala shark</button>
+        <button mat-menu-item>Ballan wrasse</button>
+        <button mat-menu-item>Bamboo shark</button>
+        <button mat-menu-item>Banded killifish</button>
+      </mat-menu>
+
+      <mat-menu #amphibians="matMenu">
+        <button mat-menu-item>Sonoran desert toad</button>
+        <button mat-menu-item>Western toad</button>
+        <button mat-menu-item>Arroyo toad</button>
+        <button mat-menu-item>Yosemite toad</button>
+      </mat-menu>
+
+      <mat-menu #reptiles="matMenu">
+        <button mat-menu-item>Banded Day Gecko</button>
+        <button mat-menu-item>Banded Gila Monster</button>
+        <button mat-menu-item>Black Tree Monitor</button>
+        <button mat-menu-item>Blue Spiny Lizard</button>
+        <button mat-menu-item disabled>Velociraptor</button>
+      </mat-menu>
+ -->
+
+                            <!--ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: task.children }"></ng-container--> 
+                      
+              
+                    <!--li id="pointer" class="nav-item green">
+                        <a class="nav-link" href="javascript:vodi(0)">Leadership</a>
+                    </li>
+                    <li class="nav-item dropdown green" id="pointer">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">Week 1</a>
+                        <ul class="dropdown-menu dropdown-info" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 1A</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 1B</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 1C</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 1D</a>
+                        </ul>
+                      </li>
+                    <li class="nav-item dropdown green" id="pointer">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="true">Week 2</a>
+                        <ul class="dropdown-menu dropdown-info" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 2A</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 2B</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 2C</a>
+                            <a class="dropdown-item green" href="javascript:void(0)">Week 2C</a>
+                        </ul>
+                      </li>
+                    <li id="pointer" class="nav-item red">
+                        <a class="nav-link" href="javascript:vodi(0)">Week 3</a>
+                    </li>
+                    <li id="pointer" class="nav-item red">
+                        <a class="nav-link" href="javascript:vodi(0)">Week 4</a>
+                    </li>
+                    <li id="pointer" class="nav-item red">
+                        <a class="nav-link" href="javascript:vodi(0)">Week 5</a>
+                    </li-->
+                    <!-- </ul> -->
+            </div>
+        </div>
+
+        <div id="tasks"  class="margin-top">
+          <h1>Urgent Tasks</h1>
+          <div class="urgenttask">
+            <div class="form-group" class="heading">
+              <label>Task</label>
+              <label>Status</label>
+            </div>
+            <div class="form-group" *ngFor="let task of imp_tasks">
+              <label>{{task.task.title}}</label>
+              <input type="checkbox" (click)="updateStatus(task.id,'task_status',$event)" [checked]="task.task_status">
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    
+        <div id="addEmployeeModal1"class="modal fade"  data-backdrop="static" data-keyboard="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form  #addTeamMember=ngForm >
+                  <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                <div class="modal-header">                        
+                  <h4 class="modal-title">Add Client</h4>
+                 
+                </div>
+                <div class="modal-body">                  
+                  <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" name="name" [(ngModel)]="form.name" [value]="form.name" class="form-control" required>
+                    <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                  </div>
+                  <div class="form-group">
+                    <label>Website</label>
+                    <input type="text" name="website" [value]="form.website" [(ngModel)]="form.website" class="form-control" required>
+                    <div class="alert alert-danger" [hidden]="!data['website']">{{data['website']}}</div>
+                  </div>
+                  <div class="form-group clientLogo">
+                    <label>Logo</label>
+                    <div class="inner-group">
+                      <img class="logo_img" src="{{logo_file | imagePath: 'logo'}}" style="width:300px">
+                    <input  type="file" accept="image/*" class="form-control logo" name="logo" required (change)="handleFileInput($event.target.files)"/>
+                    </div>
+                    
+                    <div class="alert alert-danger" [hidden]="!data['logo']">{{data['logo']}}</div>
+                  </div>
+                  <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control" name="desc" [(ngModel)]="form.desc" required>{{form.desc}}</textarea> 
+                    <div class="alert alert-danger" [hidden]="!data['desc']">{{data['desc']}}</div> 
+                  </div>                        
+                </div>
+                <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" (click)="close()" value="Cancel">
+                  <button (click)="addClient(form)" class="btn btn-success">Add</button>
+                  <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    
+
+        <div id="addProject"class="modal fade"  data-backdrop="static" data-keyboard="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form  #addTeamMember=ngForm >
+                <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                <div class="modal-header">                        
+                  <h4 class="modal-title">Add Project</h4>
+
+                </div>
+                <div class="modal-body">                  
+                  <div class="form-group">
+                    <label>Company Name</label>
+                    <select name="company_id" [(ngModel)] = "project_form.company_id">
+                      <option *ngFor="let client of clients" value="{{client.id}}" [selected]="selectedCompanyValue == client.id" >{{client.name}}</option>
+                    </select>
+                    <div class="alert alert-danger" [hidden]="!data['company_id']">{{data['company_id']}}</div>
+                  </div>     
+                  <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" name="name" [value]="project_form.name" [(ngModel)]="project_form.name" class="form-control" required>
+                    <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                  </div>
+                <div class="form-group">
+                  <label>Template Name</label>
+                  <select [(ngModel)] = "project_form.template_id" name="template_id">
+                    <option  value="null" selected>Select Template</option>
+                    <option *ngFor="let template of templates" value="{{template.id}}">{{template.name}}</option>
+                  </select>
+                  <div class="alert alert-danger" [hidden]="!data['template_id']">{{data['template_id']}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Team/Region</label>
+                  <input type="text" name="region" [value]="project_form.region" [(ngModel)]="project_form.region" class="form-control" required>
+                  <div class="alert alert-danger" [hidden]="!data['region']">{{data['region']}}</div> 
+                </div>
+                 <input type="hidden" name="id" [(ngModel)]="project_form.id" *ngIf="project_form.id">
+                </div>
+                <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" (click)="close()" value="Cancel">
+                  <button (click)="addProject(project_form)" class="btn btn-success">Add</button>
+                  <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    
+          <!--project contacts-->
+    
+          <div id="projectContacts"class="modal fade"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                
+                <form  #addTeamMember=ngForm >
+                    <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                  <div class="modal-header">                        
+                    <h4 class="modal-title">Project Contacts</h4>
+                    <button *ngIf="permissions != null && permissions.manage_project && user.type == 1" class="add-button" (click)="openAddParticipant()"><i class="fa fa-plus-circle"></i></button>
+                  </div>
+                  <div class="modal-body">    
+                    <div class="alert alert-{{status}}" [hidden]="!project_contact_message">{{project_contact_message}}</div>              
+                     <div class="addparticipant">
+                       
+                       <div id="toggle" *ngIf="showParticipantForm">
+                        <h1>{{project_contact_title}}</h1>
+                        <div class="form-group">
+                          <label>Name</label>
+                          <input type="text" name="name" [(ngModel)]="project_contact.name" placeholder="Name">
+                          <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Job Title</label>
+                          <input type="text" name="job_title" [(ngModel)]="project_contact.job_title" placeholder="Job Title">
+                          <div class="alert alert-danger" [hidden]="!data['job_title']">{{data['job_title']}}</div>
+                        </div>
+                        <div class="form-group email-address-input">  
+                          <label>Email Address</label>
+                          <input type="email" name="email"  (keyup)="getEmailIds()" [disabled]="disable_email" autocomplete="off" [(ngModel)]="project_contact.email" placeholder="Email Address">
+                          <ul *ngIf="search_email?.length> 0">
+                            <li *ngFor="let p of search_email" (click)="selectEmail(p.id,p.email)">{{p.email}}</li>
+                          </ul>
+                          <div class="alert alert-danger" [hidden]="!data['email']">{{data['email']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Phone Number</label>
+                          <input type="text" name="phone" [(ngModel)]="project_contact.phone" placeholder="Phone Number">
+                          <div class="alert alert-danger" [hidden]="!data['phone']">{{data['phone']}}</div>
+                        </div>
+                        <div class="form-group checkbox">
+                          <label>Need reminder notification</label>
+                          <input type="checkbox" name="need_reminder" [(ngModel)]="project_contact.need_reminder" [checked]="project_contact.need_reminder">
+                          <div class="alert alert-danger" [hidden]="!data['need_reminder']">{{data['need_reminder']}}</div>
+                        </div>
+                        <input type="hidden" name="type" [(ngModel)]="project_contact.type" />
+                        <input type="hidden" name="id" [(ngModel)]="project_contact.id" *ngIf="project_contact.id"/>
+                        <input type="hidden" name="project_id" [(ngModel)]="project_contact.project_id" />
+                        <input type="hidden" name="action" [(ngModel)]="project_contact.action" />
+                        <div class="alert alert-danger" [hidden]="!data['type']">{{data['type']}}</div>
+                        <div class="form-group submitBtn">
+                          <button class="addBtn" (click)="addParticipant()" [disabled]="!addTeamMember.valid">{{(project_contact.id?'Save':'Add')}}</button>
+                          <div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div>
+                        </div>
+                       </div>                       
+                     </div>  
+					<div class="project-contacts-table">  
+                     <table class="table table-striped table-hover" id="sflteam">
+                      <thead>
+                          <tr>
+               
+                              <th>Name</th>
+                              <th>Job Title</th>
+                              <th>Email Address</th>
+                              <th>Phone Number</th>
+                              <th>Need Reminder</th>
+                              <th *ngIf="permissions != null && permissions.manage_project  && user.type == 1">Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let member of participants">
+                              <td>{{member.name}}</td>
+                              <td>{{member.roles.name}}</td>
+                              <td>{{member.email}}</td>
+                              <td>{{member.phone}}</td>
+                              <td *ngIf="member.need_reminder == 1"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="member.need_reminder != 1"><i class="fa fa-times" aria-hidden="true"></i></td>
+                              <td *ngIf="permissions != null && permissions.manage_project  && user.type == 1">
+                                  <a href="javascript:void(0);" (click)="editModal(member.id)" class="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                  <a href="javascript:void(0);" (click)="deleteModal(member.id)" class="delete"><i class="fa fa-trash" aria-hidden="true"></i></a>    
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table> 
+				</div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+   
+          <!--meeting-->
+          <div id="projectMeeting"class="modal fade"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form  #addTeamMember=ngForm >
+                    <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                  <div class="modal-header">                        
+                    <h4 class="modal-title">Project Meetings</h4>
+                    <a *ngIf="permissions != null && permissions.manage_project  && user.type == 1" href="javascript:void(0);" class="add-button" (click)="openAddMeetingForm()"><i class="fa fa-plus-circle"></i></a>
+                  </div>
+                  <div class="modal-body">  
+                      <div class="alert alert-{{status}}" [hidden]="!project_meeting_message">{{project_meeting_message}}</div>                   
+                     <div class="addparticipant" *ngIf="show_meeting_form">
+                        <h1>{{project_meeting_title}}</h1>
+                       
+                       <div id="toggle" >
+                        <div class="form-group">
+                          <label>Name</label>
+                          <input type="text" name="Name" placeholder="Name" [(ngModel)]="project_meeting.name" >
+                          <div class="alert alert-danger" [hidden]="!data['name']">{{data['name']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Date</label>
+                          <input type="text" name="date" placeholder="mm/dd/YYYY H:i A" [value]="project_meeting.date" [(ngModel)]="project_meeting.date"  [owlDateTimeTrigger]="dt" [owlDateTime]="dt">
+                          <owl-date-time #dt></owl-date-time>
+                          <div class="alert alert-danger" [hidden]="!data['date']">{{data['date']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Country</label>
+                          <select name="country" [(ngModel)]="project_meeting.country" (change)="getZones(project_meeting.country,'country')">
+                            <option value="null">Select Country</option>
+                            <option *ngFor="let country of countries" value="{{country.country_code}}" [selected]="project_meeting.country == country.country_code">{{country.country_name}}</option>
+                          </select>
+                          <div class="alert alert-danger" [hidden]="!data['country']">{{data['country']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Zone</label>
+                          <select name="zone" [(ngModel)]="project_meeting.zone" (change)="getZones(project_meeting.zone,'zone')">
+                            <option value="null">Select Zone</option>
+                            <option *ngFor="let zone of zones" value="{{zone.zone_id}}" [selected]="project_meeting.zone == zone.zone_id">{{zone.zone_name}}</option>
+                          </select>
+                          <div class="alert alert-danger" [hidden]="!data['zone']">{{data['zone']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Timezone</label>
+                          <select name="timezone" [(ngModel)]="project_meeting.timezone">
+                            <option value="null">Select timezone</option>
+                            <option *ngFor="let timezone of timezones" value="{{timezone.id}}" [selected]="project_meeting.timezone == timezone.id">{{timezone.abbreviations}}</option></select>
+                          <div class="alert alert-danger" [hidden]="!data['timezone']">{{data['timezone']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>DST</label>
+                          <select name="dst" [(ngModel)]="project_meeting.dst">
+                            <option value="1" [selected]="project_meeting.dst == 1">Yes</option>
+                            <option value="0" [selected]="project_meeting.dst == 0">No</option>
+                          </select>
+                          <div class="alert alert-danger" [hidden]="!data['date']">{{data['date']}}</div>
+                        </div>
+                        <div class="form-group">
+                          <label>Notes</label>
+                          <textarea type="text" name="notes" placeholder="Notes" [(ngModel)]="project_meeting.notes"></textarea>
+                          <div class="alert alert-danger" [hidden]="!data['notes']">{{data['notes']}}</div>
+                        </div>
+                        <div class="form-group todos">
+                          <div class="todotitle">
+                              <label>Meeting Agenda</label> <div class="inline-block" (click)="addTodo()"><i class="fa fa-plus-circle"></i></div>
+                          </div>
+                          
+                           <div *ngFor="let todo of project_meeting.task;let i=index; trackBy: trackMeetingArray" class="meetingBox"> 
+                            <input type="text" name="task[{{i}}]" placeholder="Tasks/To do's"[(ngModel)]="project_meeting.task[i]" required><div class="inline-cross" (click)="deleteTodo(i)"><i class="fa fa-times" aria-hidden="true"></i></div>
+                            <div class="alert alert-danger" [hidden]="!show_task_error">Meeting Agenda is required</div> 
+                           </div>                          
+
+                        </div>
+                        <div class="form-group checkbox uploding-doc" id="uploding">
+							<div class="documents-box">     
+                          <label>Documents</label>
+                          <input type="file" name="docs[]" multiple (change)="project_meeting.id?getFileDetails($event,1):getFileDetails($event)">
+						  </div>
+                          <div class="alert alert-danger" [hidden]="!data['docs']">{{data['docs']}}</div>
+                          <ng-container *ngIf="urls.length > 0" [ngTemplateOutlet]="displayDocuments" [ngTemplateOutletContext]="{$implicit: urls,'meeting_docs': true}"></ng-container>
+                          <!-- <ng-container *ngFor='let url of urls; let i=index;'>
+                          <div class="outer">
+                              <div *ngIf="url.doctype.indexOf('png') >= 0 || url.doctype.indexOf('jpg') >= 0 || url.doctype.indexOf('jpeg') >= 0 || url.doctype.indexOf('image') >= 0" class="uplaod-img">
+                              <img  [src]="url.doc" height="200" style="width: 100%; height: 100%; object-fit: cover;">
+                              </div>
+                              <div *ngIf="url.doctype.indexOf('doc') >= 0" class="document_upload">
+                              <div class="title">{{url.docname}}</div>
+                              </div>
+                              <div *ngIf="url.doctype.indexOf('zip') >= 0 " class="document_zip">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                              <div *ngIf="url.doctype.indexOf('pdf') >= 0  " class="document_pdf">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                              <div *ngIf="url.doctype.indexOf('powerpoint') >= 0  " class="document_ppt">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                              <div *ngIf="url.doctype.indexOf('psd') >= 0  " class="document_psd">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                                   <div *ngIf="url.doctype.indexOf('video') >= 0  " class="document_video">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                              <div *ngIf="url.doctype.indexOf('image') == -1 && url.doctype.indexOf('doc') == -1 && url.doctype.indexOf('zip') == -1 && url.doctype.indexOf('png') == -1 && url.doctype.indexOf('jpg') == -1 && url.doctype.indexOf('pdf') == -1 && url.doctype.indexOf('powerpoint') == -1 && url.doctype.indexOf('octet') == -1 &&
+                              url.doctype.indexOf('video') == -1  " class="document_doc">
+                                  <div class="title">{{url.docname}}</div>
+                                  </div>
+                              <div (click)="url.docid?deleteFile(i,url.docid):deleteFile(i)"><i class="fa fa-times" aria-hidden="true"></i></div>
+                          </div>
+                          </ng-container> -->
+                        </div>
+                        <input type="hidden" name="project_id" [(ngModel)]="project_meeting.project_id" />
+                        <div class="form-group submitBtn">
+                          <button class="addBtn" (click)="addMeeting()">{{(project_meeting.id?'Save':'Add')}}</button>
+                        </div>
+                       </div>
+                     </div>       
+                     <div class="outerTable">
+                     <table class="table table-striped table-hover" id="sflteam">
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th>Meeting Name</th>
+                              <th>Dates</th>
+                              <th>Status</th>
+                              <th *ngIf="permissions != null &&  permissions.manage_project  && user.type == 1">Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                         <ng-container *ngFor="let m of meeting; let i = index"> 
+                          <tr [ngClass]="{'shown':m.show_detail}">
+                              <td (click)="openMeetingDetails(m.id,i)" class="details-control" ></td>
+                              <td>{{m.name}}</td>
+                              <td>{{m.date | date: 'short'}}, {{m.zone_name}} {{m.abbreviations}} <span *ngIf="m.dst">DST</span></td>
+                              <td *ngIf="user.type == 1"><input type="checkbox" [checked]="m.status" name="status" value="1" (change)="changeMeetingStatus(m.id,!m.status)" class="bulk_check"></td>
+                              <td *ngIf="user.type != 1 && m.status"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !m.status"><i class="fa fa-times" aria-hidden="true"></i></td>
+                              <td *ngIf="permissions != null &&  permissions.manage_project  && user.type == 1">
+                                <a href="javascript:void(0);" (click)="editMeetingModal(m.id)" class="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                <!-- <a href="javascript:void(0);" (click)="deleteMeetingModal(m.id)" class="delete"><i class="fa fa-trash" aria-hidden="true"></i></a> -->
+                              </td>
+                             
+                          </tr>
+                          <tr *ngIf="m.show_detail">
+                            <td colspan="5" class="todosList">
+                              <b>Meeting Name:</b> {{m.name}}<br>
+                              <b> Date:</b> {{m.date | date: 'short'}}, {{m.zone_name}} {{m.abbreviations}} <span *ngIf="m.dst">DST</span><br>
+                              <b>Notes:</b> {{m.notes}}<br>
+                              <div *ngIf="m.meeting__agendas?.length > 0">    
+                                  <b>Todos:</b>  <br>   
+                              <ul class="rodosLinks">
+                                <li *ngFor="let task of m.meeting__agendas">{{task.task}}</li>
+                              </ul>
+                              </div>
+                              <div *ngIf="m.meeting__files?.length > 0">
+                              <b class="documents-text">Documents:</b> <br>
+                              <!-- <ng-container *ngIf="m.meeting__files.length > 0" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: m.meeting__files, download:true}"></ng-container> --> 
+                              <div *ngFor="let doc of m.meeting__files" class="project-wraper">
+                                <!-- <span *ngIf="doc.project__files.file_type == 'png' || doc.project__files.file_type == 'jpg' || doc.project__files.file_type == 'jpeg'">
+                                  <a target="_blank" href="http://202.164.49.133:5022/sfl-coa/blog/public/{{doc.project__files.path}}"><img src="http://202.164.49.133:5022/sfl-coa/blog/public/{{doc.project__files.path}}"></a>
+                                </span>
+                                <span *ngIf="doc.project__files.file_type != 'png' && doc.project__files.file_type != 'jpg' && doc.project__files.file_type != 'jpeg'">
+                                  <a target="_blank" href="http://202.164.49.133:5022/sfl-coa/blog/public/{{doc.project__files.path}}">Doc</a>
+                                </span> -->     
+								
+										
+											<div *ngIf="doc.project__files.file_type.indexOf('png') >= 0 || doc.project__files.file_type.indexOf('jpg') >= 0 || doc.project__files.file_type.indexOf('jpeg') >= 0 || doc.project__files.file_type.indexOf('image') >= 0" class="upload-image">
+											  <img class="img-fluid" src="{{doc.project__files.path | imagePath }}">    
+											</div>											
+											<div *ngIf="doc.project__files.file_type.indexOf('doc') >= 0" class="document_upload">
+											  <div class="title">{{doc.project__files.name}}</div>								  
+											</div>											
+											<div *ngIf="doc.project__files.file_type.indexOf('zip') >= 0 " class="document_zip">
+											  <div class="title">{{doc.project__files.name}}</div>
+											 </div>		
+											<div *ngIf="doc.project__files.file_type.indexOf('pdf') >= 0  " class="document_pdf">
+											  <div class="title">{{doc.project__files.name}}</div>
+											 </div>
+											<div *ngIf="doc.project__files.file_type.indexOf('powerpoint') >= 0  " class="document_ppt">
+											  <div class="title">{{doc.project__files.name}}</div>
+											  </div>									
+											<div *ngIf="doc.project__files.file_type.indexOf('octet') >= 0  " class="document_psd">
+											  <div class="title">{{doc.project__files.name}}</div>
+											  </div>
+											  <div *ngIf="doc.project__files.file_type.indexOf('video') >= 0  " class="document_video">
+											  <div class="title">{{doc.project__files.name}}</div>
+											  </div>
+										  <div *ngIf="doc.project__files.file_type.indexOf('image') == -1 && doc.project__files.file_type.indexOf('doc') == -1 && doc.project__files.file_type.indexOf('zip') == -1 && doc.project__files.file_type.indexOf('png') == -1 && doc.project__files.file_type.indexOf('jpg') == -1 && doc.project__files.file_type.indexOf('pdf') == -1 && doc.project__files.file_type.indexOf('powerpoint') == -1 && doc.project__files.file_type.indexOf('octet') == -1 &&
+										  doc.project__files.file_type.indexOf('video') == -1 " class="document_doc">
+										  <div class="title">{{doc.project__files.name}}</div>
+										  </div>    
+										 <a href="{{doc.project__files.path | imagePath }}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a> 
+								</div>     
+                            </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                    <!--   </div>
+                    </td>
+                  </tr>
+                </ng-container> -->
+
+                      </tbody>
+                  </table>     
+                </div>       
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!--date-->
+          <div id="projectLogistics"class="modal fade task-logistics"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+              <div class="modal-content task-modal-content">  
+                  <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                  <div _ngcontent-c1 class="modal-header">
+                  <h4 class="modal-title">Important Tasks & Logistics</h4>
+                  <a *ngIf="permissions != null && permissions.manage_project  && user.type == 1" href="javascript:void(0);" class="add-button" (click)="openImportantTaskForm()"><i class="fa fa-plus-circle"></i></a>
+                  </div>  
+                  <div class="alert alert-{{status}}" [hidden]="!project_logistic_message">{{project_logistic_message}}</div> 
+                  
+                  <div class="addparticipant addparticipant-task" *ngIf="show_add_task">  
+                    <!--<h1>{{project_meeting_title}}</h1>-->                     
+                   <div>
+                     <div class="task-form">              
+                       <div class="task-form-heading"><h5>{{logistics_title}} </h5></div>
+                         
+                        <form>   
+                          <div class="row">   
+                              <div class="col-md-6">                       
+                                <div class="form-group row">
+                                    <label for="colFormLabelSm" class="col-sm-3 col-form-label col-form-label-sm">Task Title</label>
+                                    <div class="col-sm-9">
+                                      <input type="text" name="title" [(ngModel)]="logistic.title" class="form-control form-control-sm" id="colFormLabelSm">
+                                      <div class="alert alert-danger" [hidden]="!data['title']">{{data['title']}}</div>
+                                    </div>
+                                </div> 
+                              </div>
+                              <div class="col-md-6">                       
+                                <div class="form-group row">
+                                    <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm task-text">Task</label>     
+                                    <div class="col-sm-8">
+                                      <input type="text" name="task" [(ngModel)]="logistic.task" class="form-control form-control-sm" id="colFormLabelSm">
+                                      <div class="alert alert-danger" [hidden]="!data['task']">{{data['task']}}</div>
+                                    </div>  
+                                </div>     
+                              </div>
+                              <div class="col-md-6"> 
+                                <div class="form-group row">
+                                    <label for="colFormLabelSm" class="col-sm-3 col-form-label col-form-label-sm">Date</label>
+                                    <div class="col-sm-9">    
+                                      <input type="text" class="form-control form-control-sm" name="due_date" [(ngModel)]="logistic.due_date" id="colFormLabelSm" 
+                                       [owlDateTimeTrigger]="dt" [owlDateTime]="dt">
+                                      <owl-date-time #dt></owl-date-time>
+                                      
+                                    </div>
+                                </div>
+                             </div>							  
+                            <div class="col-md-6"> 
+                              <div class="form-group row">
+                                  <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Parent Task</label>
+                                    <div class="col-sm-8">
+                                        <select name="parent_task_id" [(ngModel)]="logistic.parent_task_id" class="form-control" id="exampleFormControlSelect1">
+                                            <option value="null" selected>Select Parent Task</option>
+                                            <option *ngFor="let t of all_tasks" value="{{t.id}}">{{t.title}}: {{t.task}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>							
+                          </div>
+                          <div class="row"> 
+                            <div class="col-md-6"> 
+                                <div class="form-group row">
+                                    <label for="colFormLabelSm" class="col-sm-3 col-form-label col-form-label-sm">Type</label>
+                                    <div class="col-sm-9">     
+                                        <select class="form-control" (change)="selectType(logistic.type)" name="type" [(ngModel)]="logistic.type" id="exampleFormControlSelect1">
+                                            <option value="null" selected>Select Member Type</option>
+                                            <option value="1" [selected]="logistic.type == 1">SFL Team Member</option>
+                                            <option value="2" [selected]="logistic.type == 2">Participant</option>
+                                        </select>
+                                    </div> 
+                                </div>
+                            </div>
+							<div class="col-md-6"> 
+									<div class="form-group row">
+										<label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Assigned To</label>
+										<div class="col-sm-8">
+											<select class="form-control" name="assigned_to" [(ngModel)]="logistic.assigned_to" id="exampleFormControlSelect1">
+												<option value="null" selected>Select SFL Team Member</option>
+												<option *ngFor="let team of team_member"  value="{{team.id}}" [selected]="logistic.assigned_to == team.id">{{team.name}}</option>
+											</select>
+										</div>
+									</div>
+							   </div> 
+							                               
+							                         
+                            </div> 
+                            <div class="row">
+								<div class="col-md-2">  
+                                    <div class="form-group row check-box-row">
+                                        <label for="colFormLabelSm" class="col-form-label col-form-label-sm">Urgent Task</label>
+                                        <div class="check-box">  
+                                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" [checked]="logistic.urgent" name="urgent" [(ngModel)]="logistic.urgent" value="option1" aria-label="...">
+                                        </div>      
+                                    </div>           
+                                </div>   
+								<div class="col-md-4">    
+                                  <div class="form-group row check-box-row">
+                                      <label for="colFormLabelSm" class="col-form-label col-form-label-sm">Need Reminder</label>      
+                                      <div class="check-box">  
+                                          <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" name="need_reminder" [(ngModel)]="logistic.need_reminder" [checked]="logistic.need_reminder" value="option1" aria-label="...">
+                                      </div>
+                                  </div> 
+							    </div>         
+                            </div>      
+                            <div class="row text-area-row"> 
+                                <div class="col-md-12"> 
+                                  <div class="form-group row">
+                                      <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Note</label>
+                                      <div class="col-sm-10">
+                                          <textarea class="form-control" id="exampleFormControlTextarea1" name="note" [(ngModel)]="logistic.note" rows="3">{{logistic.note}}</textarea>
+                                      </div>  
+                                  </div> 
+                              </div>  
+                           </div> 
+                           <input type="hidden" name="project_id" value="logistic.project_id" [(ngModel)]="logistic.project_id" /> 
+                           <input type="hidden" name="task_id" value="logistic.task_id" [(ngModel)]="logistic.task_id" *ngIf="logistic.task_id != null"/>
+                           <input type="hidden" name="assigned_to_id" value="logistic.assigned_to_id" [(ngModel)]="logistic.assigned_to_id" *ngIf="logistic.assigned_to_id != null"/>
+                           <input type="hidden" name="p_task_id" value="logistic.p_task_id"  [(ngModel)]="logistic.p_task_id" *ngIf="logistic.p_task_id != null"/>
+                            <div class="task-add-btn"><button class="add-btn" (click)="addLogisticTask()">{{(logistic.task_id?'Save':'Add')}}</button><div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div></div>            
+                        </form>       
+                     </div>
+
+                   </div>
+                 </div> 
+                <tabs>  
+                    <tab tabTitle="Important-Tasks" class="task-tabs">     
+                      <div class="outerTable">                
+                      <table class="table table-striped table-hover" id="sflteam">
+                      <thead>
+                          <tr>
+                              <th>Tasks </th>
+                              <th>Dates</th>
+                              <th>Urgent</th>
+                              <th>Need Reminder</th>
+                              <th>Completed</th>                            
+                              <th>Assigned</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let task of imp_tasks">
+                              <td>{{task.task.title}}: {{task.task.task}}</td>
+                              <td>{{task.due_date | date: 'MM/dd/yyyy'}}</td>
+                              <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(p_temp_id.id,'urgent',$event)" [checked]="task.urgent"></td>
+                              <td *ngIf="user.type != 1 && task.urgent"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.urgent"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(p_temp_id.id,'need_reminder',$event)" [checked]="task.need_reminder"></td>
+                              <td *ngIf="user.type != 1 && task.need_reminder"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.need_reminder"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(p_temp_id.id,'task_status',$event)" [checked]="task.task_status"></td>
+                              <td *ngIf="user.type != 1 && task.task_status"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.task_status"><i class="fa fa-times" aria-hidden="true"></i></td>
+                             <!--  <td>{{task.assigned_to.users.name}}</td> -->
+                              <td>{{task.users.name}}</td>
+                          </tr>
+                      </tbody>
+                  </table> 
+                </div>  
+                    </tab>
+                    <tab tabTitle="Logistics" class="task-tabs">  
+                      <div class="selectBluk" *ngIf="show_bulk_action_select">
+                        <select name="selectBulk" *ngIf="permissions != null && permissions.manage_project && user.type == 1" (change)="bulkAction()" [(ngModel)]="selectBulk">
+                          <option value="null"> Bulk Action </option>
+                          <option value="delete"> Delete </option>
+                          <option value="need_reminder"> Activate need reminder </option>
+                          <option value="status"> Activate status </option>
+                          <option value="urgent"> Activate urgent task </option>
+                          <option value="assign"> Bulk Assignment </option>
+                        </select>
+                      </div> 
+                      <div *ngIf="show_bulk_assign_form && user.type == 1">
+                        <form #bulkAssign=ngForm>
+                          <div class="col-md-6"> 
+                                  <div class="form-group row">
+                                      <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Type</label>
+                                      <div class="col-sm-8">
+                                          <select class="form-control" (change)="selectType(assign_to.type)" name="type" [(ngModel)]="assign_to.type" id="exampleFormControlSelect1">
+                                              <option value="null" selected>Select Member Type</option>
+                                              <option value="1" [selected]="assign_to.type == 1">SFL Team Member</option>
+                                              <option value="2" [selected]="assign_to.type == 2">Participant</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-md-6"> 
+                                  <div class="form-group row">
+                                      <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Assigned To</label>
+                                      <div class="col-sm-8">
+                                          <select class="form-control" name="assigned_to" [(ngModel)]="assign_to.assigned_to" id="exampleFormControlSelect1">
+                                              <option value="null" selected>Select SFL Team Member</option>
+                                              <option *ngFor="let team of team_member"  value="{{team.id}}" [selected]="assign_to.assigned_to == team.id">{{team.name}}</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                              </div>
+                            <div class="task-add-btn"><button class="add-btn" (click)="bulkAssignToTask()">Save</button><div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div></div> 
+                            </form>  
+                        </div>
+                      
+                      <ng-template [ngTemplateOutlet]="taskTable" [ngTemplateOutletContext]="{ $implicit: prelatedtasks, todo: '6'}">
+                      </ng-template>
+                      <ng-template #taskTable let-prelatedtasks>  
+                        <div class="outerTable">
+                      <table class="table table-striped table-hover" id="sflteam">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th *ngIf="user.type == 1"><input (click)="addChild(prelatedtasks,prelatedtasks[0].parent_task_id,$event)" class="checkedAll" type="checkbox"></th>
+                                <th>Tasks </th>
+                                <th>Dates</th>
+                                <th>Urgent</th>
+                                <th>Need Reminder</th>
+                                <th>Completed</th>                            
+                                <th>Assigned</th>
+                                <th *ngIf="permissions != null && permissions.manage_project && user.type == 1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <ng-container *ngFor="let task of prelatedtasks">
+                            <tr>
+                                <td (click)="openSubTasks($event)" [ngClass]="{'details-control': task.children?.length > 0,'shown': show}" id="{{task.id}}"></td>
+                                <td *ngIf="user.type == 1"><input class="checkchild" (click)="checkbox(task.p_temp_id)" [checked]="checkarray.indexOf(task.p_temp_id) > -1" type="checkbox"></td>
+                                <td>{{task.title}}: {{task.task}}</td>
+                                <td>{{task.due_date | date: 'MM/dd/yyyy'}}</td>
+                                <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(task.p_temp_id,'urgent',$event)" [checked]="task.urgent"></td>
+                              <td *ngIf="user.type != 1 && task.urgent"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.urgent"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(task.p_temp_id,'need_reminder',$event)" [checked]="task.need_reminder"></td>
+                              <td *ngIf="user.type != 1 && task.need_reminder"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.need_reminder"><i class="fa fa-times" aria-hidden="true"></i></td>
+
+                              <td *ngIf="user.type == 1"><input type="checkbox" (click)="updateStatus(task.p_temp_id,'task_status',$event)" [checked]="task.task_status"></td>
+                              <td *ngIf="user.type != 1 && task.task_status"><i class="fa fa-check" aria-hidden="true"></i></td>
+                              <td *ngIf="user.type != 1 && !task.task_status"><i class="fa fa-times" aria-hidden="true"></i></td>
+                                <td>{{task.assigned_to}}</td>
+                                <td *ngIf="permissions != null && permissions.manage_project && user.type == 1">
+                                    <a href="javascript:void(0);" (click)="editImpTaskModal(task.p_temp_id,task.id,task.assigned_to_id)" class="edit" data-toggle="modal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                    <a href="javascript:void(0);" (click)="deleteImpTaskModal(task.p_temp_id)" class="delete" data-toggle="modal"><i class="fa fa-trash" aria-hidden="true"></i></a>    
+                                </td>
+                            </tr>
+                            <tr *ngIf="task.children?.length > 0" class=" child hide">
+                              <td [colSpan]="9">
+                                <ng-template [ngTemplateOutlet]="taskTable" [ngTemplateOutletContext]="{ $implicit: task.children, todo: '6'}"></ng-template>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </tbody>
+                      </table>  
+                    </div>  
+                    </ng-template>  
+                    </tab>
+ 
+                 <!--      <ng-template #taskTable let-prelatedtasks>  
+                      <table mat-table [dataSource]="prelatedtasks" class="mat-elevation-z8">
+
+                        <ng-container matColumnDef="select">
+                          <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterToggle() : null"
+                                          [checked]="selection.hasValue() && isAllSelected()"
+                                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                          [aria-label]="checkboxLabel()">
+                            </mat-checkbox>
+                          </th>
+                          <td mat-cell *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                          (change)="$event ? selection.toggle(row) : null"
+                                          [checked]="selection.isSelected(row)"
+                                          [aria-label]="checkboxLabel(row)">
+                            </mat-checkbox>
+                          </td>
+                        </ng-container>
+                      
+                        <ng-container matColumnDef="position">
+                          <th mat-header-cell *matHeaderCellDef> Tasks </th>
+                          <td mat-cell *matCellDef="let element"> {{element.title}}: {{element.task}} </td>
+                        </ng-container>
+                      
+                        <ng-container matColumnDef="name">
+                          <th mat-header-cell *matHeaderCellDef> Date </th>
+                          <td mat-cell *matCellDef="let element"> {{element.due_date | date: 'MM/dd/yyyy'}} </td>
+                        </ng-container>
+                      
+                        <ng-container matColumnDef="weight">
+                          <th mat-header-cell *matHeaderCellDef> Urgent </th>
+                          <td mat-cell *matCellDef="let element"> <input type="checkbox" [checked]="element.urgent"> </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="weight">
+                          <th mat-header-cell *matHeaderCellDef> Need Reminder </th>
+                          <td mat-cell *matCellDef="let element"> <input type="checkbox" [checked]="element.need_reminder"> </td>
+                        </ng-container>
+                        <ng-container matColumnDef="weight">
+                          <th mat-header-cell *matHeaderCellDef> Status </th>
+                          <td mat-cell *matCellDef="let element"> <input type="checkbox" [checked]="element.task_status"> </td>
+                        </ng-container>
+                      
+                        <ng-container matColumnDef="symbol">
+                          <th mat-header-cell *matHeaderCellDef> Assigned To </th>
+                          <td mat-cell *matCellDef="let element"> {{element.assigned_to}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="symbol">
+                          <th mat-header-cell *matHeaderCellDef> Action </th>
+                          <td mat-cell *matCellDef="let element"> 
+                            <a href="javascript:void(0);" (click)="editImpTaskModal(element.p_temp_id,element.id,element.assigned_to_id)" class="edit" data-toggle="modal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            <a href="javascript:void(0);" (click)="deleteImpTaskModal(element.p_temp_id,element.id,element.assigned_to_id)" class="delete" data-toggle="modal"><i class="fa fa-trash" aria-hidden="true"></i></a>  
+                          </td>
+                        </ng-container>
+                      
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                            (click)="selection.toggle(row)">
+                        </tr>
+                      </table>
+                    </ng-template> -->
+                  </tabs>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete Modal HTML -->
+          <div id="deleteTaskModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <div class="modal-header">            
+                    <h4 class="modal-title">Delete Task</h4>
+                    
+                  </div>
+                  <div class="modal-body">          
+                    <p>Are you sure you want to delete these Tasks? This will delete all its subtasks as well.</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>                
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="button" class="btn btn-danger" (click)="deleteTaskAction(delete_task)" value="Delete">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+         <!--Project File-->
+         <div id="projectFiles"class="modal fade task-logistics"  data-backdrop="static" data-keyboard="false">         
+            <div class="modal-dialog">
+              <div class="modal-content task-modal-content">  
+                  <button type="button" class="close" data-dismiss="modal" (click)="close()" aria-hidden="true">&times;</button>
+                  <div _ngcontent-c1 class="modal-header">
+                  <h4 class="modal-title">Project Files</h4>
+                  </div>  
+                <tabs>  
+                    <tab tabTitle="Templates" class="task-tabs"> 
+                      <div *ngIf="user.type == 1" class="uploadBtn"><a href="javascript:void(0);" class="add-button uplaodTem" (click)="openUploadFileForm()">Upload Templates  </a></div>
+                      <div *ngIf="user.type == 1" class="alert alert-{{status}}" [hidden]="!project_file_message">{{project_file_message}}</div>
+                      <div *ngIf="show_add_file_form && user.type == 1">
+                        <form #uploadFiles=ngForm>
+						              <div class="button-outer">          
+                          <div class="form-group checkbox documents-btn uploding-doc" id="uploding">
+						  <div class="documents-box">  
+                          <label>Documents</label>
+                          <input type="file" name="project_files[]" multiple (change)="getProjectFileDetails($event)">
+						  </div>
+                          <div class="alert alert-danger" [hidden]="!data['project_files']">{{data['project_files']}}</div>    
+                          
+                          <ng-container *ngIf="f_urls.length > 0" [ngTemplateOutlet]="displayDocuments" [ngTemplateOutletContext]="{$implicit: f_urls}"></ng-container>
+                        </div>
+                        <div class="task-add-btn add-button"><button class="add-btn" (click)="addFileTemplate()">Add</button><div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div></div>
+						            </div>
+                        </form> 
+                      </div>
+                      <div class="porjectOuter">
+                          <div class="row">
+                            <ng-container *ngIf="temp_files.length > 0 && user.type == 1" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: temp_files,download: false}"></ng-container>
+                            <ng-container *ngIf="temp_files.length > 0 && user.type != 1" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: temp_files,download: true}"></ng-container>
+                            <!-- <ng-container *ngFor="let t_file of temp_files" > 
+                              <div class="col-md-3">
+                                <div class="project-image">
+                                  <div *ngIf=" (t_file.file_type.indexOf('png') >= 0 || t_file.file_type.indexOf('jpg') >= 0 || t_file.file_type.indexOf('jpeg') >= 0)">
+                                    <img class="img-fluid"   [src]="'http://202.164.49.133:5022/sfl-coa/blog/public/' + t_file.path" height="200">
+                                  </div>
+                                  <div class="img-fluid doc-file"  *ngIf="t_file.file_type.indexOf('png') == -1 && t_file.file_type.indexOf('jpg') == -1 && t_file.file_type.indexOf('png') == -1">                                                                 
+                                  </div>
+							
+                                  <div class="title">{{t_file.name}}</div>
+								
+                                  <a *ngIf="user.type == 1" (click)="deleteFileModal(t_file.id)" class="crossBtn"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                  <a *ngIf="user.type != 1" href="{{'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path}}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                </div>                                
+                              </div>
+                            </ng-container>   -->
+                          </div> 
+                      </div>
+                    </tab>
+                    <tab tabTitle="Files" class="task-tabs">   
+                      <div *ngIf="user.type != 1" class="uploadBtn"><a href="javascript:void(0);" class="add-button uplaodTem" (click)="openUploadFileForm()">Upload Files  </a></div>
+                      <div *ngIf="user.type != 1" class="alert alert-{{status}}" [hidden]="!project_file_message">{{project_file_message}}</div>
+                      <div *ngIf="show_add_file_form && user.type != 1">
+                        <form #uploadFiles=ngForm>
+                          <div class="button-outer">          
+                          <div class="form-group checkbox documents-btn uploding-doc" id="uploding">
+                          <label>Documents</label>
+                          <input type="file" name="project_files[]" multiple (change)="getProjectFileDetails($event)">
+                          <div class="alert alert-danger" [hidden]="!data['project_files']">{{data['project_files']}}</div>  
+                          <ng-container *ngIf="f_urls.length > 0" [ngTemplateOutlet]="displayDocuments" [ngTemplateOutletContext]="{$implicit: f_urls}"></ng-container>   
+                         <!--  <ng-container *ngFor='let f_url of f_urls; let i=index;'>
+                              <div class="outer">
+                            <div *ngIf="f_url.doctype.indexOf('png') >= 0 || f_url.doctype.indexOf('jpg') >= 0 || f_url.doctype.indexOf('jpeg') >= 0 || f_url.doctype.indexOf('image') >= 0" class="uplaod-img">
+                             <img  [src]="f_url.doc" height="200" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+
+                            <div *ngIf="f_url.doctype.indexOf('doc') >= 0" class="document_upload">
+                                <div class="title">{{f_url.docname}}</div>
+                                </div>
+                                <div *ngIf="f_url.doctype.indexOf('zip') >= 0 " class="document_zip">
+                                    <div class="title">{{f_url.docname}}</div>
+                                    </div>
+                                <div *ngIf="f_url.doctype.indexOf('pdf') >= 0  " class="document_pdf">
+                                    <div class="title">{{f_url.docname}}</div>
+                                    </div>
+                                <div *ngIf="f_url.doctype.indexOf('powerpoint') >= 0  " class="document_ppt">
+                                    <div class="title">{{f_url.docname}}</div>
+                                    </div>
+                                <div *ngIf="f_url.doctype.indexOf('octet') >= 0  " class="document_psd">
+                                    <div class="title">{{f_url.docname}}</div>
+                                    </div>
+
+                                    <div *ngIf="f_url.doctype.indexOf('video') >= 0  " class="document_video">
+                                    <div class="title">{{f_url.docname}}</div>
+                                    </div>
+                            
+                                    <div *ngIf="f_url.doctype.indexOf('image') == -1 && f_url.doctype.indexOf('doc') == -1 && f_url.doctype.indexOf('zip') == -1 && f_url.doctype.indexOf('png') == -1 && f_url.doctype.indexOf('jpg') == -1 && f_url.doctype.indexOf('pdf') == -1 && f_url.doctype.indexOf('powerpoint') == -1 && f_url.doctype.indexOf('octet') == -1 &&
+                                    f_url.doctype.indexOf('video') == -1 " class="document_doc">
+                                        <div class="title">{{f_url.docname}}</div>
+                                        </div>
+
+                                  <a *ngIf="user.type != 1" (click)="deleteFileModal(f_url.id)" class="crossBtn"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                  <a *ngIf="user.type == 1" href="{{'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path}}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a>
+                          </div>
+                          </ng-container> -->
+                        </div>
+                        <div class="task-add-btn add-button"><button class="add-btn" (click)="addFileTemplate(3)">Add</button><div class="loading" *ngIf="loading"><img src="./assets/img/Spinner-1s-200px.gif"></div></div>
+                        </div>
+                        </form> 
+                      </div>
+                      <div class="porjectOuter">
+                          <div class="row">
+                            <ng-container *ngIf="files.length > 0 && user.type == 1" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: files,download: true}"></ng-container>
+                            <ng-container *ngIf="files.length > 0 && user.type != 1" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: files,download: false}"></ng-container>
+                            <!-- <ng-container *ngFor="let t_file of meeting_files" > 
+                              <div class="col-md-3">
+                                <div class="project-image">
+                                  <div *ngIf="t_file.file_type.indexOf('png') >= 0 || t_file.file_type.indexOf('jpg') >= 0 || t_file.file_type.indexOf('jpeg') >= 0">
+                                    <img class="img-fluid"   [src]="'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path" height="200">
+                                  </div>
+                                  <div class="img-fluid doc-file"  *ngIf="t_file.file_type.indexOf('png') == -1 && t_file.file_type.indexOf('jpg') == -1 && t_file.file_type.indexOf('png') == -1">                                  
+                                   
+                                  </div>
+						
+                                  <div class="title">{{t_file.name}}</div>
+							
+                                  <a *ngIf="user.type != 1" (click)="deleteFileModal(t_file.id)" class="crossBtn"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                  <a *ngIf="user.type == 1" href="{{'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path}}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a>
+
+                                </div>                                
+                              </div>
+                            </ng-container>   -->
+                          </div> 
+                      </div>
+                    </tab>
+                    <tab tabTitle="Meeting Files" class="task-tabs">   
+                      <div class="porjectOuter">
+                          <div class="row">
+                           <ng-container *ngIf="meeting_files.length > 0" [ngTemplateOutlet]="displayFiles" [ngTemplateOutletContext]="{$implicit: meeting_files, download: true}"></ng-container>
+                            <!-- <ng-container *ngFor="let t_file of meeting_files" > 
+                              <div class="col-md-3">
+                                <div class="project-image">
+                                  <div *ngIf="t_file.file_type.indexOf('png') >= 0 || t_file.file_type.indexOf('jpg') >= 0 || t_file.file_type.indexOf('jpeg') >= 0">
+                                    <img class="img-fluid"   [src]="'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path" height="200">
+                                  </div>
+                                  <div class="img-fluid doc-file"  *ngIf="t_file.file_type.indexOf('png') == -1 && t_file.file_type.indexOf('jpg') == -1 && t_file.file_type.indexOf('png') == -1">                                 
+                                   
+                                  </div>      
+							  
+                                  <div class="title">{{t_file.name}}</div>
+						
+                                  <a href="{{'http://202.164.49.133:5022/sfl-coa/blog/public/'+t_file.path}}" target="_self" download class="crossBtn"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                </div>                                
+                              </div>
+                            </ng-container> -->  
+                          </div> 
+                      </div>
+                    </tab>
+                  </tabs>
+              </div>
+            </div>
+          </div>
+          <!-- Delete Modal HTML -->
+          <div id="deleteFileModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <div class="modal-header">            
+                    <h4 class="modal-title">Delete Task</h4>
+                      
+                  </div>
+                  <div class="modal-body">          
+                    <p>Are you sure you want to delete this File?</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>                
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="button" class="btn btn-danger" (click)="deleteFileAction(delete_file_id)" value="Delete">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+		         <!-- Delete Modal HTML -->
+          <div id="deleteEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <div class="modal-header">            
+                    <h4 class="modal-title">Delete Contact</h4>
+                    
+                  </div>
+                  <div class="modal-body">          
+                    <p>Are you sure you want to delete these Records?</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>                
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="button" class="btn btn-danger" (click)="deleteContact(member_id)" value="Delete">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+            <!-- Delete Modal HTML -->
+          <div id="deleteMeetingModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <div class="modal-header">            
+                    <h4 class="modal-title">Delete Meeting</h4>
+                    
+                  </div>
+                  <div class="modal-body">          
+                    <p>Are you sure you want to delete theis meeting?</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>                
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="button" class="btn btn-danger" (click)="deleteMeeting(meeting_id)" value="Delete">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+
+

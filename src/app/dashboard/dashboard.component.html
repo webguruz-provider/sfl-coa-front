@@ -1,0 +1,69 @@
+<div class="wrapper" id="clients">
+  <app-navbar></app-navbar>
+  <div class="main-panel ps ps--active-y">
+  <app-header></app-header>
+    <div class="tempalte-dash">
+    	<div class="table-title dashboard-title"><h1>Dashboard</h1></div>    
+	<div class="dashboard-section">  
+    	<div class="row">
+    		<div class="col-md-4">
+                <a [routerLink]="['/team']">
+    				<div class="sfl-box">
+        				<img class="dashborad" src="./assets/img/team.png">
+            			<div class="count">{{data.team_count}}</div>
+            			<div class="name">SFL Team Members</div>
+                    </div>
+				</a>
+    		</div>
+    		<div class="col-md-4">
+                <a [routerLink]="['/today-tasks/urgent']">
+    			  <div class="sfl-box">
+    				<img class="dashborad" src="./assets/img/task.png">
+        			<div class="count">{{data.important_pending_tasks}}</div>
+        			<div class="name">Today's Urgent tasks</div>
+    			  </div>
+                </a>
+    		</div>
+    		<div class="col-md-4">
+                <a [routerLink]="['/clients']">
+    				<div class="sfl-box">
+        				<img class="dashborad" src="./assets/img/clients.png">
+            			<div class="count">{{data.client_count}}</div>
+        			    <div class="name">Active Clients</div>
+                    </div>
+				</a>
+    		</div>
+    	</div>
+    	<div class="row">
+    		<div class="col-md-4">
+                <a [routerLink]="['/projects/active']">
+    				<div class="sfl-box">
+    				<img class="dashborad" src="./assets/img/pro123.png">
+    					<div class="count">{{data.active_projects_count}}</div>
+    					<div class="name">On going projects</div>
+    				</div>
+                </a>
+    		</div>
+    		<div class="col-md-4">
+                <a [routerLink]="['/projects/archive']">
+    				<div class="sfl-box">
+    					<img class="dashborad" src="./assets/img/Archieve-Projects.png">
+    					<div class="count">{{data.inactive_projects_count}}</div>
+    					<div class="name">Archive Projects</div>
+    				</div>
+                </a>
+    		</div>
+    		<div class="col-md-4">
+                <a [routerLink]="['/today-tasks/pending']">
+    				<div class="sfl-box">
+    				<img class="dashborad" src="./assets/img/pending-task.png">
+    					<div class="count">{{data.pending_task_count}}</div>
+    					<div class="name">Today's Pending Task</div>
+    				</div>				
+                </a>
+    		</div>   
+    	</div> 
+	</div>
+    </div>  
+	</div>
+</div>
